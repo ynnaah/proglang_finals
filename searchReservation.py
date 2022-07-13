@@ -45,10 +45,10 @@ def searchReservation(parentTkClass: tk):
     def searchButton():
         
         srcKey = str(ticketNoEntry.get())
-
+        
         if not srcKey:
             #ERROR CHECKPOINT
-            showerror(title='Empty Field', message='Search field must not be empty!').pack()
+            showerror(title='Empty Field', message='Search field must not be empty!')
         else:
             with open("reservations", "r") as file:
                 line = file.readlines()
@@ -87,7 +87,7 @@ def searchReservation(parentTkClass: tk):
                     else:
                         counter+=5
                 else: #ERROR CHECKPOINT
-                    showerror(title='Search Results', message='No reservations made with that RSVP number!').pack()
+                    showerror(title='Search Results', message='No reservations made with that RSVP number!')
 
     submitButton = ttk.Button(
         detailsFrame,

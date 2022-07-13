@@ -31,8 +31,9 @@ def reserveSlot(choice, parentTkClass: tk):
         studentNo = studentNoEntry.get()
         time = current_time.get()
 
+        
         if not name or not studentNo or not time: #ERROR CHECKPOINT
-            showerror(title='Reservation Empty', message='Incomplete details! Please input again.').pack()
+            showerror(title='Reservation Empty', message='Incomplete details! Please input again.')
         else: 
             key_list = list(TIME.keys())
             val_list = list(TIME.values())
