@@ -46,45 +46,48 @@ def searchReservation(parentTkClass: tk):
         
         srcKey = str(ticketNoEntry.get())
 
-        with open("reservations", "r") as file:
-            line = file.readlines()
-            line_length = len(line)
-            counter = 1
-            while counter < line_length:
-                
-                if line[counter] == srcKey+"\n":
-                    print("\nRSVP Number: {}".format(line[counter]), end="")
-                    rsvp_no = line[counter].rstrip("\n")
-                    line_no1 = counter
-                    counter += 1
-                    print("\tName: {}".format(line[counter]), end="")
-                    stud_name = line[counter].rstrip("\n")
-                    line_no2 = counter
-                    counter += 1
-                    print("\tStudent Number: {}".format(line[counter]), end="")
-                    stud_no = line[counter].rstrip("\n")
-                    line_no3 = counter
-                    counter += 1
-                    print("\tArea: {}".format(line[counter]), end="")
-                    pe_area = line[counter].rstrip("\n")
-                    line_no4 = counter
-                    venue = line[counter].strip()
-                    counter += 1
-                    print("\tTime: {}".format(line[counter]), end="---------------------------------------------------\n")
-                    time_slot = line[counter].rstrip("\n")
-                    time = line[counter].strip()
-                    line_no5 = counter
-                    counter +=1
+        if not srcKey:
+            #ERROR CHECKPOINT
+            showerror(title='Empty Field', message='Search field must not be empty!').pack()
+        else:
+            with open("reservations", "r") as file:
+                line = file.readlines()
+                line_length = len(line)
+                counter = 1
+                while counter < line_length:
+                    if line[counter] == srcKey+"\n":
+                        print("\nRSVP Number: {}".format(line[counter]), end="")
+                        rsvp_no = line[counter].rstrip("\n")
+                        line_no1 = counter
+                        counter += 1
+                        print("\tName: {}".format(line[counter]), end="")
+                        stud_name = line[counter].rstrip("\n")
+                        line_no2 = counter
+                        counter += 1
+                        print("\tStudent Number: {}".format(line[counter]), end="")
+                        stud_no = line[counter].rstrip("\n")
+                        line_no3 = counter
+                        counter += 1
+                        print("\tArea: {}".format(line[counter]), end="")
+                        pe_area = line[counter].rstrip("\n")
+                        line_no4 = counter
+                        venue = line[counter].strip()
+                        counter += 1
+                        print("\tTime: {}".format(line[counter]), end="---------------------------------------------------\n")
+                        time_slot = line[counter].rstrip("\n")
+                        time = line[counter].strip()
+                        line_no5 = counter
+                        counter +=1
 
-                    values = [rsvp_no, stud_name, stud_no, pe_area, time_slot]
-                    searchReservationWindow.withdraw()
-                    rtWindow.reservationTicket(searchReservationWindow, dataToShow=values)
-            
-                    break 
-                else:
-                    counter+=5
-            else: #ERROR CHECKPOINT
-                showerror(title='Search Results', message='No reservations made with that RSVP number!').pack()
+                        values = [rsvp_no, stud_name, stud_no, pe_area, time_slot]
+                        searchReservationWindow.withdraw()
+                        rtWindow.reservationTicket(searchReservationWindow, dataToShow=values)
+                
+                        break 
+                    else:
+                        counter+=5
+                else: #ERROR CHECKPOINT
+                    showerror(title='Search Results', message='No reservations made with that RSVP number!').pack()
 
     submitButton = ttk.Button(
         detailsFrame,

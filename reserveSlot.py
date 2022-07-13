@@ -1,6 +1,7 @@
 import time as systime
 import tkinter as tk
 from tkinter import ttk, Toplevel
+from tkinter.messagebox import showerror
 
 import reservationTicket as rtWindow
 
@@ -10,110 +11,103 @@ def reserveSlot(choice, parentTkClass: tk):
     
     reserveSlotWindow = Toplevel(parentTkClass)
     
-    def fillSet():
-        TIME = {
-            1: "8:00am to 9:00am",
-            2: "9:00am to 10:00am",
-            3: "10:00am to 11:00am",
-            4: "12:00nn to 1:00pm",
-            5: "1:00pm to 2:00pm",
-            6: "2:00pm to 3:00pm",
-            7: "3:00pm to 4:00pm",
-            8: "4:00pm to 5:00pm"
-        }
+    TIME = {
+        1: "8:00am to 9:00am",
+        2: "9:00am to 10:00am",
+        3: "10:00am to 11:00am",
+        4: "12:00nn to 1:00pm",
+        5: "1:00pm to 2:00pm",
+        6: "2:00pm to 3:00pm",
+        7: "3:00pm to 4:00pm",
+        8: "4:00pm to 5:00pm"
+    }
 
+    def fillSet():
         new_list = list(TIME.values())   
         return new_list
 
     def submitButton():
-        TIME = {
-            1: "8:00am to 9:00am",
-            2: "9:00am to 10:00am",
-            3: "10:00am to 11:00am",
-            4: "12:00nn to 1:00pm",
-            5: "1:00pm to 2:00pm",
-            6: "2:00pm to 3:00pm",
-            7: "3:00pm to 4:00pm",
-            8: "4:00pm to 5:00pm"
-        }
         name = nameEntry.get()
         studentNo = studentNoEntry.get()
         time = current_time.get()
 
-        key_list = list(TIME.keys())
-        val_list = list(TIME.values())
-
-        position = val_list.index(time)
-        slot = key_list[position]
-
-        #reading slots based on venue and time
-        with open(choice, "r") as file_read:
-            file_read.seek(0,0)
-            lines = file_read.readlines()
-            current_slot = int(lines[slot-1])
-
-        #check if current slot is full or not
-        if(current_slot > 0):
-             #read content
+        if not name or not studentNo or not time: #ERROR CHECKPOINT
+            showerror(title='Reservation Empty', message='Incomplete details! Please input again.').pack()
+        else: 
+            key_list = list(TIME.keys())
+            val_list = list(TIME.values())
+    
+            position = val_list.index(time)
+            slot = key_list[position]
+    
+            #reading slots based on venue and time
             with open(choice, "r") as file_read:
                 file_read.seek(0,0)
                 lines = file_read.readlines()
-
-                #change 
-                temp = lines[slot-1]
-                temp.rstrip("\n")
-                temp = int(temp)-1
-                lines[slot-1] = str(temp)+"\n"
-
-            #write new
-            with open(choice, "w") as file_write:
-                file_write.writelines(lines)
-
-            #write student's info to the reservation file
-            with open("reservations", "r") as file_read:
-                file_read.seek(0,0)
-                reservation = file_read.readlines()
+                current_slot = int(lines[slot-1])
+    
+            #check if current slot is full or not
+            if(current_slot > 0):
+                 #read content
+                with open(choice, "r") as file_read:
+                    file_read.seek(0,0)
+                    lines = file_read.readlines()
+    
+                    #change 
+                    temp = lines[slot-1]
+                    temp.rstrip("\n")
+                    temp = int(temp)-1
+                    lines[slot-1] = str(temp)+"\n"
+    
+                #write new
+                with open(choice, "w") as file_write:
+                    file_write.writelines(lines)
+    
+                #write student's info to the reservation file
+                with open("reservations", "r") as file_read:
+                    file_read.seek(0,0)
+                    reservation = file_read.readlines()
+                    temp = reservation[0]
+                    temp.rstrip("\n")
+                    write_student(temp, name, studentNo, choice, TIME[slot]) #write student's info
+    
+                #increment RSVP number
+                with open("reservations", "r") as file:
+                    file.seek(0,0)
+                    reservation = file.readlines()
+    
+                #change
                 temp = reservation[0]
                 temp.rstrip("\n")
-                write_student(temp, name, studentNo, choice, TIME[slot]) #write student's info
-
-            #increment RSVP number
-            with open("reservations", "r") as file:
-                file.seek(0,0)
-                reservation = file.readlines()
-
-            #change
-            temp = reservation[0]
-            temp.rstrip("\n")
-            temp = int(temp)+1
-            reservation[0] = str(temp)+"\n"
-
-            #writing incremented rsvp number
-            with open("reservations", "w") as file:
-                file.writelines(reservation)
-
-            #find rsvp number of latest register
-            with open("reservations", "r+") as file:
-                file.seek(0,0)
-                lines = file.readlines()
-
-                rsvp_num = int(lines[0].rstrip("\n"))-1
-                rsvp_num = str(rsvp_num)
-
-            #output
-            print("RSVP Number: \t" + rsvp_num)
-            print("Name: \t\t" + name)
-            print("Student number: " + studentNo)
-            print("Area: \t\t" + choice)
-            print("Time: \t\t" + str(TIME[slot]))
-
-            confirmation = [rsvp_num, name, studentNo, choice, str(TIME[slot])]
-            reserveSlotWindow.withdraw()
-            rtWindow.reservationTicket(reserveSlotWindow, dataToShow=confirmation)
-
-        else:
-            print("Slot is full! Please choose another venue or time.")
-            systime.sleep(2)
+                temp = int(temp)+1
+                reservation[0] = str(temp)+"\n"
+    
+                #writing incremented rsvp number
+                with open("reservations", "w") as file:
+                    file.writelines(reservation)
+    
+                #find rsvp number of latest register
+                with open("reservations", "r+") as file:
+                    file.seek(0,0)
+                    lines = file.readlines()
+    
+                    rsvp_num = int(lines[0].rstrip("\n"))-1
+                    rsvp_num = str(rsvp_num)
+    
+                #output
+                print("RSVP Number: \t" + rsvp_num)
+                print("Name: \t\t" + name)
+                print("Student number: " + studentNo)
+                print("Area: \t\t" + choice)
+                print("Time: \t\t" + str(TIME[slot]))
+    
+                confirmation = [rsvp_num, name, studentNo, choice, str(TIME[slot])]
+                reserveSlotWindow.withdraw()
+                rtWindow.reservationTicket(reserveSlotWindow, dataToShow=confirmation)
+    
+            else:
+                print("Slot is full! Please choose another venue or time.")
+                systime.sleep(2)
 
     def write_student(rsvp_num, name, stud_num, area, time):
         '''This function writes the student's info in the file for the reservation'''
